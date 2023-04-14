@@ -107,12 +107,12 @@ public class MainWindow extends Stage{
 				aceptationStates = (TextField) loader.getNamespace().get("aceptationStates");
 				
 				textForTable.setText("Bienvenido, recuerde ingresar los valores separados paor ,. ejemplo a,b,c,d,e");
-				alphabetEntersText.setText("0");
+				alphabetEntersText.setText("0,1");
 				numStatesText.setText("2");
-				statesText.setText("a,b");
-				numTransitionsText.setText("2");
-				inicialStateText.setText("a");
-				aceptationStates.setText("a");
+				statesText.setText("A,B");
+				numTransitionsText.setText("4");
+				inicialStateText.setText("A");
+				aceptationStates.setText("A");
 		        textForTable.setWrapText(true);
 
 				
