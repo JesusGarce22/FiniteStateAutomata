@@ -44,7 +44,7 @@ Al ejecutar el programa de saldra esta ventana
 
 Esta es la pagina principal del proyecto, para iniciar debes seleccionar si vas a añadir una maquina de Moore o de Maely (solo seleccionar una), el progrma carga unos valores por defecto, pero tu debes diligenciar cada uno de los campos con tus propios valores, ten en cuenta en los campos de Alfabeto de entrada, Ingresar estados  y Estados de aceptacion debes ingresar los valores separados por una coma ','. Los valores de los campos Numero de estados y de transiciones son numericos. Una vez diligenciados todos los campos, debes dar click al boton "CARGAR DATOS" para que el sistema carge los datos que ingresaste. Luega, deberas ingresar cada transicion de acuerdo con el numero de transiciones que diligenciaste en el campo de arriba. Cuando le das click al boton "INGRESAR TRANSICIONES" te mostrara esta pantalla.
 
-Nota: sobre el numero de transiciones a ingresar, ten en cuenta que si vas a ingresar un automata con un simbolo de entrada (0) y dos estados, debes ingresar como minimo 2 transiciones para que el programa funcione, si ingresas 2 o mas simbolos de entra deberas ingresar un numero de transiciones de la forma: x = numero de simbolos de entrada, y = numero de estados, entonces numero de transiciones = y^x. Este valos es el minimo, puede tener un mayor numero de transiciones(aunque no se recomienda que ingreses un numero mayor)
+Nota: sobre el numero de transiciones a ingresar, ten en cuenta que si vas a ingresar un automata con un simbolo de entrada (0) y dos estados, debes ingresar como minimo 2 transiciones para que el programa funcione, si ingresas 2 o mas simbolos de entra deberas ingresar un numero de transiciones de la forma: x = numero de simbolos de entrada, y = numero de estados, entonces numero de transiciones = y*x. Este valos es el minimo, puede tener un mayor numero de transiciones(aunque no se recomienda que ingreses un numero mayor)
 
 ![](Docs/EnterTransitions.PNG)
 
@@ -54,7 +54,13 @@ Una vez ingresaste todas las transiciones, dale click en el boton "ES CONEXO?" p
 
 Si quieres ver la tabla de transicion, dale click al boton "MOSTRAR" y se mostrara la tabla de transicion en el textArea(solo se mostrara si ya agregaste todas las transiciones y probaste si el automata es conexo). Para finalizar, si quieres minimizar el automata, dale click al boton "MINIMIZAR" y se mostraran las particiones finales del automata (solo se mostrara si ya agregaste todas las transiciones). Por ultimo, para salir del programa, dale click al boton "SALIR".
 
+## [Diagrama de clases](Docs)
+![Diagrama de clases](Docs/AutomatasDiagram.cld.bmp)
+
 ## Autores
 
-## Jesus Garces
-## Juan Pablo Acevedo
+## 1. Jesus Garces 
+## 2. Juan Pablo Acevedo
+
+
+
