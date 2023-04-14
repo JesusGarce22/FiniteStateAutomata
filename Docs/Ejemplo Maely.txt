@@ -1,0 +1,84 @@
+Estados: A, B, C
+Entradas: 0, 1
+Salidas: 0, 1
+
+Tabla de transiciones:
+
+| Estado actual | Entrada | Estado siguiente | Salida |
+| ------------- | ------- | ---------------- | ------ |
+| A             | 0       | A                | 0      |
+| A             | 1       | B                | 0      |
+| B             | 0       | A                | 0      |
+| B             | 1       | C                | 0      |
+| C             | 0       | A                | 0      |
+| C             | 1       | C                | 1      |
+
+En este ejemplo, la máquina de Mealy tiene tres estados: A, B y C, y dos entradas: 0 y 1. La máquina emite una salida de 1 cada vez que se detecta una secuencia de tres 1's consecutivos.
+
+A continuación, te daré un ejemplo de cómo implementar esta máquina de Mealy en Java:
+
+```java
+public class MealyMachine {
+    private static final int A = 0;
+    private static final int B = 1;
+    private static final int C = 2;
+
+    private static final int ZERO_INPUT = 0;
+    private static final int ONE_INPUT = 1;
+
+    private static final int ZERO_OUTPUT = 0;
+    private static final int ONE_OUTPUT = 1;
+
+    private int currentState;
+
+    public MealyMachine() {
+        currentState = A;
+    }
+
+    public int getNextState(int input) {
+        switch(currentState) {
+            case A:
+                if(input == ZERO_INPUT) {
+                    return A;
+                } else {
+                    return B;
+                }
+            case B:
+                if(input == ZERO_INPUT) {
+                    return A;
+                } else {
+                    return C;
+                }
+            case C:
+                if(input == ZERO_INPUT) {
+                    return A;
+                } else {
+                    return C;
+                }
+            default:
+                throw new IllegalArgumentException("Invalid state: " + currentState);
+        }
+    }
+
+    public int getOutput(int input) {
+        switch(currentState) {
+            case A:
+            case B:
+            case C:
+                return ZERO_OUTPUT;
+            case C:
+                return ONE_OUTPUT;
+            default:
+                throw new IllegalArgumentException("Invalid state: " + currentState);
+        }
+    }
+
+    public void processInput(int input) {
+        int nextState = getNextState(input);
+        int output = getOutput(input);
+
+        currentState = nextState;
+
+        System.out.print(output);
+    }
+}
