@@ -40,5 +40,4 @@ public class State {
 		this.isConex = isConex;
 	}
     
-    
 }

@@ -46,6 +46,7 @@ public class MooreMachine {
 		     table[i][j] = states.get(i-1).getName();
 		    
 		}
+		
 	}
 
 	public int[] getAlphabetEnter() {
@@ -199,7 +200,6 @@ public class MooreMachine {
 			for (int i = 1; i < numStates+1; i++) {
 			    for (int j = 1; j < alphabetEnter.length+1; j++) {
 			    	if(table[i][j] == destinations.get(counter).getName()) {
-			    	System.out.println("si es destino"+ destinations.get(counter).getName());
 			    	counter++;	}
 			    	else {
 			    		table = eliminarFila(table, i);
@@ -217,62 +217,65 @@ public class MooreMachine {
 		    }
 		    sb.append("\n");
 		}
-		
-		System.out.println();
-		System.out.println(table.length);
 		return sb.toString();
 	}
 	
 	public void minimize() {
 		//separos estados de aceptacion y los otros
-		ArrayList<State> aux = new ArrayList<State>();
 		ArrayList<State> noAcep = new ArrayList<State>();
 		partitions = new ArrayList<String>();
 		
-		for (int j=0;j<states.size();j++) {
-			if(states.get(j).isAceptation()==true) {
-				
-			}
-			else {
-				noAcep.add(states.get(j));
-			}
-		}
-		
-		noAcep.removeAll(statesAceptation);
-		
+		noAcep.addAll(states);
+
 		// Agregar algunos objetos State al ArrayList
 		ArrayList<String> stateStrings = new ArrayList<String>();
 		ArrayList<String> noStateStrings = new ArrayList<String>();
+		ArrayList<String> allStatesInString = new ArrayList<String>();
+		
 		for (State statesAceptation : statesAceptation) {
 		    stateStrings.add(statesAceptation.getName());
 		}
 		for (State nostatesAceptation : noAcep) {
 			noStateStrings.add(nostatesAceptation.getName());
 		}
+		for (State sta : states) {
+			allStatesInString.add(sta.getName());
+		}
 		
-		partitions.add("Estados de aceptacion {"+stateStrings+ "} Particiones {"+ noStateStrings+"}");
-		
+		noStateStrings.removeAll(stateStrings);
+		partitions.add(" "+stateStrings+ " ");		
 		
 		//Revisamos si algun estado que no es de aceptacion tiene como destino un estado de aceptacion en alguna transicion
-		ArrayList<State> newPartition = new ArrayList<State>();
-		
-		splitPartition(statesAceptation, noAcep, newPartition);
+		ArrayList<String> newPartition = new ArrayList<String>();
+			
+		splitPartition(stateStrings, noStateStrings, newPartition,allStatesInString);
 	}
 	
-	public void splitPartition(ArrayList<State> acep,ArrayList<State> noAcep,ArrayList<State> newPartition) {
+	public void splitPartition(ArrayList<String> acep,ArrayList<String> noAcep,ArrayList<String> newPartition, ArrayList<String> allStates) {
+		
+		allStates.removeAll(acep);
+		
+		//condicion de parada
+		if(allStates.isEmpty()) {
+			return;
+		}
+		
 		for (int i = 0; i < transitions.size(); i++) {
-			for (int k = 0; k < statesAceptation.size(); k++) {
-				if(transitions.get(i).getDestination()==acep.get(k)) {
-					newPartition.add(transitions.get(i).getDestination());
-					ArrayList<String> noStateStrings = new ArrayList<>();
-					for (State nostatesAceptation : newPartition) {
-						
-						noStateStrings.add(nostatesAceptation.getName());
-					}
+			for (int k = 0; k < acep.size(); k++) {
+				if(transitions.get(i).getDestination().getName().equalsIgnoreCase(acep.get(k)) && !transitions.get(i).getSource().getName().equalsIgnoreCase(acep.get(k))) {
 					
-					partitions.add("{"+newPartition+ "}");
+					newPartition.add(transitions.get(i).getSource().getName());
+					
 				}
 			}
 		}
+		partitions.add(" "+newPartition+" ");
+		acep.removeAll(acep);
+		acep.addAll(newPartition);
+		newPartition.removeAll(newPartition);
+		
+		//llamado recursivo
+		splitPartition(acep, noAcep, newPartition, allStates);
 	}
+	
 }

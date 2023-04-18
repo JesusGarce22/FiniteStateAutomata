@@ -1,10 +1,10 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MealyMachine {
-	private int[] alphabetEnter;
+	
+	 private int[] alphabetEnter;
 	 private int numStates;
 	 private ArrayList<State> states;
 	 private ArrayList<Transition> transitions;
@@ -13,6 +13,7 @@ public class MealyMachine {
 	 public String [][] table;
 	 public ArrayList<State> destinations;
 	 public ArrayList<String> partitions;
+	 private ArrayList<String> inputs;
 	 
 	public MealyMachine(int[] alphabetEnter, int numStates, ArrayList<State> states, ArrayList<Transition> transitions,
 			State initialState, ArrayList<State> statesAceptation) {
@@ -24,6 +25,9 @@ public class MealyMachine {
 		this.initialState = initialState;
 		this.statesAceptation = statesAceptation;
 		table = new String[numStates+1][alphabetEnter.length+1];
+		inputs = new ArrayList<>();
+		inputs.add("0");
+		inputs.add("1");
        
 		if(alphabetEnter.length>2) {
 			System.out.println("solo se aceptan maquinas de entradas 0 y 1");
@@ -44,6 +48,16 @@ public class MealyMachine {
 		for (int i = 1; i < table.length; i++) {
 		     table[i][j] = states.get(i-1).getName();
 		    
+		}
+		
+		//recorrer los estados para saber cuales son de aceptacion, servira para minimizar la maquina
+		for (int i = 0; i < states.size(); i++) {
+			for (int k = 0; k < statesAceptation.size(); k++) {
+				if(states.get(i)==statesAceptation.get(k)) {
+					states.get(i).setAceptation(true);
+				}
+			}
+
 		}
 	}
 
@@ -198,7 +212,6 @@ public class MealyMachine {
 			for (int i = 1; i < numStates+1; i++) {
 			    for (int j = 1; j < alphabetEnter.length+1; j++) {
 			    	if(table[i][j] == destinations.get(counter).getName()) {
-			    	System.out.println("si es destino"+ destinations.get(counter).getName());
 			    	counter++;	}
 			    	else {
 			    		table = eliminarFila(table, i);
@@ -216,62 +229,75 @@ public class MealyMachine {
 		    }
 		    sb.append("\n");
 		}
-		
-		System.out.println();
-		System.out.println(table.length);
 		return sb.toString();
 	}
-	/*
-	public void minimize() {
-		//separos estados de aceptacion y los otros
-		ArrayList<State> aux = new ArrayList<State>();
-		ArrayList<State> noAcep = new ArrayList<State>();
-		partitions = new ArrayList<String>();
-		
-		for (int j=0;j<states.size();j++) {
-			if(states.get(j).isAceptation()==true) {
-				
-			}
-			else {
-				noAcep.add(states.get(j));
-			}
-		}
-		
-		noAcep.removeAll(statesAceptation);
-		
-		// Agregar algunos objetos State al ArrayList
-		ArrayList<String> stateStrings = new ArrayList<String>();
-		ArrayList<String> noStateStrings = new ArrayList<String>();
-		for (State statesAceptation : statesAceptation) {
-		    stateStrings.add(statesAceptation.getName());
-		}
-		for (State nostatesAceptation : noAcep) {
-			noStateStrings.add(nostatesAceptation.getName());
-		}
-		
-		partitions.add("Estados de aceptacion {"+stateStrings+ "} Particiones {"+ noStateStrings+"}");
-		
-		
-		//Revisamos si algun estado que no es de aceptacion tiene como destino un estado de aceptacion en alguna transicion
-		ArrayList<State> newPartition = new ArrayList<State>();
-		
-		splitPartition(statesAceptation, noAcep, newPartition);
-	}
 	
-	public void splitPartition(ArrayList<State> acep,ArrayList<State> noAcep,ArrayList<State> newPartition) {
-		for (int i = 0; i < transitions.size(); i++) {
-			for (int k = 0; k < statesAceptation.size(); k++) {
-				if(transitions.get(i).getDestination()==acep.get(k)) {
-					newPartition.add(transitions.get(i).getDestination());
-					ArrayList<String> noStateStrings = new ArrayList<>();
-					for (State nostatesAceptation : newPartition) {
-						
-						noStateStrings.add(nostatesAceptation.getName());
-					}
-					
-					partitions.add("{"+newPartition+ "}");
+	
+	
+	public ArrayList<String> minimize() {
+	    // Crear las particiones iniciales
+	    ArrayList<ArrayList<State>> partitions = new ArrayList<>();
+	    ArrayList<State> acceptStates = statesAceptation;
+	    ArrayList<State> nonAcceptStates = new ArrayList<>();
+	    for (int i = 0; i < states.size(); i++) {
+			for (int j = 0; j < statesAceptation.size(); j++) {
+				if(states.get(i)==statesAceptation.get(j)) {
+					System.out.println("es un estado de aceptacion xd");
+				}else {
+					nonAcceptStates.add(states.get(i));
 				}
 			}
 		}
-	}*/
+	    
+	    partitions.add(acceptStates);
+	    partitions.add(nonAcceptStates);
+
+	    // Algoritmo de particionamiento
+	    boolean partitionFound = true;
+	    while (partitionFound) {
+	        partitionFound = false;
+	        ArrayList<ArrayList<State>> newPartitions = new ArrayList<>();
+	        for (ArrayList<State> partition : partitions) {
+	            if (partition.size() == 1) {
+	                newPartitions.add(partition);
+	                continue;
+	            }
+	            for (Transition transition : getTransitions()) {
+	                ArrayList<State> group1 = new ArrayList<>();
+	                ArrayList<State> group2 = new ArrayList<>();
+	                for (State state : partition) {
+	                    if (state == initialState) {
+	                        group1.add(state);
+	                    } else {
+	                        group2.add(state);
+	                    }
+	                }
+	                if (group1.size() > 0 && group2.size() > 0) {
+	                    newPartitions.add(group1);
+	                    newPartitions.add(group2);
+	                    partitionFound = true;
+	                    break;
+	                }
+	            }
+	            if (!partitionFound) {
+	                newPartitions.add(partition);
+	            }
+	        }
+	        partitions = newPartitions;
+	    }
+
+	    // Convertir las particiones a una lista de strings
+	    ArrayList<String> result = new ArrayList<>();
+	    for (ArrayList<State> partition : partitions) {
+	        ArrayList<String> stateNames = new ArrayList<>();
+	        for (State state : partition) {
+	            stateNames.add(state.getName());
+	        }
+	        result.add(String.join(",", stateNames));
+	    }
+	    return result;
+	}
+
 }
+
+

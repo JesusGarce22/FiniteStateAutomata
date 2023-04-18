@@ -1,10 +1,7 @@
 package ui;
 
 import java.util.ArrayList;
-
 import javax.swing.JOptionPane;
-
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -160,9 +157,14 @@ public class MainWindow extends Stage{
 					
 					JOptionPane.showMessageDialog(null, "Rellene todos los espacios antes de generar la tabla ");
 				}else {
-	    		String aux = ct.showTable();
-	    		textForTable.setText(aux);}
-	    		
+					if(MooreCheck.isSelected()) {
+						String aux = ct.showTable();
+						textForTable.setText(aux);
+					}else {
+						String aux = ct.maylEshowTable();
+						textForTable.setText(aux);
+					}
+	    		}
 	    	});
 	    	
 	    	conexButoon.setOnAction(event -> {
@@ -170,16 +172,38 @@ public class MainWindow extends Stage{
 					
 					JOptionPane.showMessageDialog(null, "Rellene todos los espacios antes de generar la tabla ");
 				}else {
-					boolean x = ct.isConex();
-		    		if(x) {
-		    			JOptionPane.showMessageDialog(null,"El automata ya es conexo");
-		    			}else {
-		    				String nic = ct.nowIsConex();
-		    				textForTable.setText(nic);
-		    			}
-		    		
+					if(MooreCheck.isSelected()) {
+						boolean x = ct.isConex();
+						
+						if(x) {
+			    			JOptionPane.showMessageDialog(null,"El automata ya es conexo");
+			    			}else {
+			    				if(MooreCheck.isSelected()) {
+			    					String nic = ct.nowIsConex();
+			    					textForTable.setText(nic);
+			    				}else {
+			    					String nic = ct.maylEnowIsConex();
+			    					textForTable.setText(nic);
+			    				}
+
+			    			}
+					}else {
+						boolean x = ct.maylEisConex();
+						
+						if(x) {
+			    			JOptionPane.showMessageDialog(null,"El automata ya es conexo");
+			    			}else {
+			    				if(MooreCheck.isSelected()) {
+			    					String nic = ct.nowIsConex();
+			    					textForTable.setText(nic);
+			    				}else {
+			    					String nic = ct.maylEnowIsConex();
+			    					textForTable.setText(nic);
+			    				}
+
+			    			}
+					}
 	    		}
-	    		
 	    	});
 	    	
 	    	minimizeButoon.setOnAction(event -> {
@@ -188,9 +212,13 @@ public class MainWindow extends Stage{
 					JOptionPane.showMessageDialog(null, "Rellene todos los espacios antes de generar la tabla ");
 				}else {
 					if(MooreCheck.isSelected()) {
-						ArrayList<String> p= ct.partition();
-						textForTable.setText(p.toString());}else {
-							//minimize for mealy
+						ArrayList<String> p=ct.partition();
+						textForTable.setText(p.toString());}
+					else if(mealyCheck.isSelected()){
+						ArrayList<String> p=ct.maylEpartition();
+						textForTable.setText(p.toString());
+					}else {
+						JOptionPane.showMessageDialog(null, "Debe seleccionar que tipo de maquina ingreso (Mealy o Moore)");
 					}
 				}
 	    	});
@@ -246,15 +274,24 @@ public class MainWindow extends Stage{
 	    	ct.createMooreAtomaton(alfab, numStates, states, transitions, initialState,statesAceptation);
 	    }
 		
+	    public void createMayle() {
+	    	ct.createMealyAtomaton(alfab, numStates, states, transitions, initialState,statesAceptation);
+	    }
+	    
 		public void isConex() {
 			if(alphabetEntersText.getText().equals("") || numStatesText.getText().equals("") || numTransitionsText.getText().equals("") || statesText.getText().equals("") || inicialStateText.getText().equals("")) {
 				
 				JOptionPane.showMessageDialog(null, "Rellene todos los espacios antes de generar la tabla ");
 			}else {
-				createMoore();
-			boolean x = ct.isConex();
-			textForTable.setText("El resultado es "+ x);
+				if(MooreCheck.isSelected()) {
+					createMoore();
+					boolean x = ct.isConex();
+					textForTable.setText("El resultado es "+ x);
+				}else {
+					createMayle();
+					boolean x = ct.maylEisConex();
+					textForTable.setText("El resultado es "+ x);
+				}
 			}
 		}
-		
 }

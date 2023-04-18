@@ -73,4 +73,5 @@ public class Transition {
 	        return "Input: "+ input + "\n" + "Output:" + output  + "\n" + "Source: " + source.getName() + "\n"
 	                + "Destination: " + destination.getName() + "\n";
 	    }
+	    
 }
